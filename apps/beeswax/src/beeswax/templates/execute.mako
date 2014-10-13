@@ -1929,8 +1929,8 @@ function addResults(viewModel, dataTable, index, pageSize) {
   if (viewModel.hasMoreResults() && index + pageSize > viewModel.design.results.rows().length) {
     $(document).one('fetched.results', function () {
       $.totalStorage(hac_getTotalStorageUserPrefix() + "${app_name}_temp_query", null);
-      dataTable.fnAddData(addRowNumberToResults(viewModel.design.results.rows.slice(index, index + pageSize), index));
     });
+    dataTable.fnAddData(addRowNumberToResults(viewModel.design.results.rows.slice(index, index + pageSize), index));
     viewModel.fetchResults();
   } else {
     dataTable.fnAddData(addRowNumberToResults(viewModel.design.results.rows.slice(index, index + pageSize), index));
@@ -2553,10 +2553,16 @@ function watchEvents() {
 }
 
 function cacheQueryTextEvents() {
-  codeMirror.on("change", function () {
-    $(".query").val(codeMirror.getValue());
-    $.totalStorage(hac_getTotalStorageUserPrefix() + "${app_name}_temp_query", codeMirror.getValue());
-  });
+  var _waitForCodemirrorInit = -1;
+  _waitForCodemirrorInit = window.setInterval(function () {
+    if (typeof codeMirror != "undefined") {
+      codeMirror.on("change", function () {
+        $(".query").val(codeMirror.getValue());
+        $.totalStorage(hac_getTotalStorageUserPrefix() + "${app_name}_temp_query", codeMirror.getValue());
+      });
+      window.clearInterval(_waitForCodemirrorInit);
+    }
+  }, 100);
 }
 
 function getDatabases(callback){
