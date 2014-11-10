@@ -48,6 +48,12 @@ HIVE_SERVER_BIN = Config(
   default='/usr/lib/hive/bin/hiveserver2',
   private=True)
 
+HIVE_SESSION_LIFETIME = Config(
+  key="hive_session_lifetime",
+  help=_t("Lifetime of session (in sec) to HiveServer2 server. This should be shorter than hive.cluster.delegation.token.max-lifetime and hive.cluster.delegation.token.renew-interval in hive-site.xml"),
+  default=79200,
+  type=int)
+
 LOCAL_EXAMPLES_DATA_DIR = Config(
   key='local_examples_data_dir',
   default=os.path.join(os.path.dirname(__file__), "..", "..", "data"),
