@@ -419,7 +419,7 @@ class HiveServerClient:
     if session is None:
       session = self.open_session(self.user)
 
-    if session.is_expired(datetime.timedelta(seconds=self.session_lifetime)):
+    if session.is_expired(seconds=self.session_lifetime):
       session = self.open_session(self.user)
       if req.sessionHandle is not None:
         req.sessionHandle = None
