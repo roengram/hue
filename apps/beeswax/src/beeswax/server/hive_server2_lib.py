@@ -313,6 +313,7 @@ class HiveServerClient:
     else:
       ssl_enabled = beeswax_conf.SSL.ENABLED.get()
       timeout = beeswax_conf.SERVER_CONN_TIMEOUT.get()
+      self.session_lifetime = beeswax_conf.HIVE_SESSION_LIFETIME.get()
 
     if ldap_username:
       username = ldap_username
@@ -416,6 +417,11 @@ class HiveServerClient:
 
     if session is None:
       session = self.open_session(self.user)
+
+    if session.is_expired(datetime.timedelta(seconds=self.session_lifetime)):
+      session = self.open_session(self.user)
+      if req.sessionHandle is not None:
+        req.sessionHandle = None
 
     if hasattr(req, 'sessionHandle') and req.sessionHandle is None:
       req.sessionHandle = session.get_handle()

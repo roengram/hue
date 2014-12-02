@@ -336,8 +336,14 @@ class Session(models.Model):
   server_protocol_version = models.SmallIntegerField(default=0)
   last_used = models.DateTimeField(auto_now=True, db_index=True, verbose_name=_t('Last used'))
   application = models.CharField(max_length=128, help_text=_t('Application we communicate with.'), default='beeswax')
+  create_time = models.DateTimeField(auto_now=False, auto_now_add=True, verbose_name=_t('Created'), default=datetime.datetime.now)
 
   objects = SessionManager()
+
+  def is_expired(self, lifetime):
+    if datetime.datetime.now() - self.create_time >= datetime.timedelta(seconds = lifetime):
+      return True
+    return False
 
   def get_handle(self):
     secret, guid = HiveServerQueryHandle.get_decoded(secret=self.secret, guid=self.guid)
